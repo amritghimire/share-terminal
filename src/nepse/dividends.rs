@@ -1,14 +1,15 @@
 use crate::nepse::api;
 use crate::nepse::response::average::{CompanyItem, TradingAverageItem};
 use crate::nepse::response::dividend::DividendListResponse;
-use regex::Regex;
 use std::collections::HashMap;
+
+use regex::Regex;
 
 const DIVIDENDS_PATH: &str = "/investment-calandar/dividend";
 const AVERAGE_PATH: &str = "/api/nots/nepse-data/trading-average";
 const COMPANY_LIST_PATH: &str = "/api/nots/company/list";
 
-pub fn export_dividends(file_path: String) {
+pub fn export_dividends() -> Result<DividendListResponse, reqwest::Error> {
     let mut average_params = HashMap::new();
     let mut average_entries = HashMap::new();
     let mut company_entries = HashMap::new();
@@ -38,14 +39,9 @@ pub fn export_dividends(file_path: String) {
         println!("Error occured: {:?}", company_response.unwrap_err());
     }
 
-    let response: Result<DividendListResponse, _> = api::fetch_nepse(DIVIDENDS_PATH, query_params);
-    if let Ok(mut list_response) = response {
-        let writer_attempt = csv::Writer::from_path(file_path);
-        if writer_attempt.is_err() {
-            eprintln!("Could not open writer here. ");
-            return;
-        }
-        let mut wrt = writer_attempt.unwrap();
+    let mut response: Result<DividendListResponse, _> =
+        api::fetch_nepse(DIVIDENDS_PATH, query_params);
+    if let Ok(ref mut list_response) = response {
         let re = Regex::new(r"<[^>]*>").unwrap();
         for dividend in list_response.data.iter_mut() {
             dividend.clean(re.clone());
@@ -55,10 +51,7 @@ pub fn export_dividends(file_path: String) {
             if let Some(entry) = average_entries.get(&dividend.symbol) {
                 dividend.integrate(entry);
             }
-            wrt.serialize(dividend);
         }
-        wrt.flush();
-    } else {
-        println!("Error occured: {:?}", response.unwrap_err());
     }
+    response
 }
