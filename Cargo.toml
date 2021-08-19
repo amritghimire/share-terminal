@@ -1,5 +1,5 @@
 [package]
-name = "share_terminal"
+name = "share-terminal"
 version = "0.1.0"
 authors = ["Amrit Ghimire <iamritghimire@gmail.com>"]
 edition = "2018"

@@ -10,7 +10,11 @@ use clap::ArgMatches;
 pub fn handle_dividends_matches(matches: &ArgMatches) {
     let file = String::from(matches.value_of("file").unwrap_or("dividends.xlsx"));
     let response = dividends::export_dividends();
-    excel::write_to_excel(file, response);
+    let write_response = excel::write_to_excel(file, response);
+    if write_response.is_err() {
+        eprintln!("Error writing to excel file.");
+        std::process::exit(1);
+    }
 }
 
 pub fn handle_updates_matches(matches: &ArgMatches) {

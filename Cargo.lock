@@ -915,7 +915,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "share_terminal"
+name = "share-terminal"
 version = "0.1.0"
 dependencies = [
  "chrono",
