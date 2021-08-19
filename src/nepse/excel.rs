@@ -139,7 +139,7 @@ pub fn write_to_excel(
         write_header(&mut sheet)?;
 
         for (row, dividend) in list_response.data.iter().enumerate() {
-            write_row(&mut sheet, row as u32 + 1, &dividend)?;
+            write_row(&mut sheet, row as u32 + 1, dividend)?;
         }
         sheet.set_column(1, 1, 30.0, None)?;
         sheet.set_column(2, 14, 10.0, Some(&text_wrap))?;
