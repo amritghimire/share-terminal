@@ -1,5 +1,6 @@
 pub mod autocompletion;
 pub mod dividends;
+pub mod rights;
 pub mod updates;
 
 use clap::{App, Shell};
@@ -13,6 +14,8 @@ pub fn handle_matches(mut app: App) {
 
     if let Some(dividends_matches) = matches.subcommand_matches("dividends") {
         nepse::handle_dividends_matches(dividends_matches);
+    } else if let Some(right_matches) = matches.subcommand_matches("rights") {
+        nepse::handle_rights_matches(right_matches);
     } else if let Some(updates_matches) = matches.subcommand_matches("updates") {
         nepse::handle_updates_matches(updates_matches);
     } else if let Some(autocompletion) = matches.subcommand_matches("autocompletion") {

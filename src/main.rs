@@ -13,6 +13,7 @@ fn main() {
             "This is a command line application that can be used as interacting with nepse alpha.",
         )
         .subcommand(subcommands::dividends::subcommand())
+        .subcommand(subcommands::rights::subcommand())
         .subcommand(subcommands::autocompletion::subcommand())
         .subcommand(subcommands::updates::subcommand());
 

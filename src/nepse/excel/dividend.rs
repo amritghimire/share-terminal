@@ -1,4 +1,4 @@
-use crate::nepse::response::dividend::{DividendListItem, DividendListResponse};
+use crate::nepse::response::gain::{DividendListItem, GainListResponse};
 use xlsxwriter::*;
 
 fn write_header(sheet: &mut Worksheet) -> Result<(), XlsxError> {
@@ -13,17 +13,14 @@ fn write_header(sheet: &mut Worksheet) -> Result<(), XlsxError> {
         "Average for Bonus Dividend",
         "Average for Cash Dividend",
         "Sector",
-        "Company Status",
         "Number of dividend Record",
         "Book Closure Date",
         "Fiscal Year",
         "Average 3 year Dividend",
         "Dividend Growth Rate",
         "Status",
-        "Closing Price Average",
         "Total Traded Share",
         "Total Trade",
-        "Weighted Average",
         "Closing Date",
     ];
     for (position, header) in headers.iter().enumerate() {
@@ -88,21 +85,15 @@ fn write_row(
         dividend.sector_name.as_ref().unwrap_or(&empty).as_str(),
         None,
     )?;
-    sheet.write_string(
-        row,
-        10,
-        dividend.company_status.as_ref().unwrap_or(&empty).as_str(),
-        None,
-    )?;
     sheet.write_formula(
         row,
-        11,
+        10,
         format!("= COUNTIF(A:A, A{})", row + 1).as_str(),
         None,
     )?;
     sheet.write_string(
         row,
-        12,
+        11,
         dividend
             .book_closure_date
             .as_ref()
@@ -110,17 +101,24 @@ fn write_row(
             .as_str(),
         None,
     )?;
-    sheet.write_string(row, 13, dividend.fiscal_year.as_str(), None)?;
-    sheet.write_string(row, 14, dividend.avg_3yr_dividend.as_str(), None)?;
-    sheet.write_string(row, 15, dividend.dividend_growth_rate.as_str(), None)?;
-    sheet.write_string(row, 16, dividend.status.as_str(), None)?;
-    sheet.write_number(row, 17, dividend.closing_price_average.unwrap_or(0.0), None)?;
-    sheet.write_number(row, 18, dividend.total_traded_shares.unwrap_or(0.0), None)?;
-    sheet.write_number(row, 19, dividend.total_trades.unwrap_or(0.0), None)?;
-    sheet.write_number(row, 20, dividend.weighted_average.unwrap_or(0.0), None)?;
+    sheet.write_string(row, 12, dividend.fiscal_year.as_str(), None)?;
+    sheet.write_string(row, 13, dividend.avg_3yr_dividend.as_str(), None)?;
+    sheet.write_string(row, 14, dividend.dividend_growth_rate.as_str(), None)?;
+    sheet.write_string(row, 15, dividend.status.as_str(), None)?;
     sheet.write_string(
         row,
-        21,
+        16,
+        dividend
+            .total_traded_shares
+            .as_ref()
+            .unwrap_or(&empty)
+            .as_str(),
+        None,
+    )?;
+    sheet.write_number(row, 17, dividend.total_trades.unwrap_or(0.0), None)?;
+    sheet.write_string(
+        row,
+        18,
         dividend.closing_date.as_ref().unwrap_or(&empty).as_str(),
         None,
     )?;
@@ -130,7 +128,7 @@ fn write_row(
 
 pub fn write_to_excel(
     file_path: String,
-    response: Result<DividendListResponse, reqwest::Error>,
+    response: Result<GainListResponse<DividendListItem>, reqwest::Error>,
 ) -> Result<(), XlsxError> {
     if let Ok(list_response) = response {
         let workbook = Workbook::new(file_path.as_str());
@@ -143,7 +141,7 @@ pub fn write_to_excel(
         }
         sheet.set_column(1, 1, 30.0, None)?;
         sheet.set_column(2, 14, 10.0, Some(&text_wrap))?;
-        sheet.autofilter(0, 0, list_response.data.len() as u32 + 2, 21)?;
+        sheet.autofilter(0, 0, list_response.data.len() as u32 + 2, 19)?;
 
         println!("Press Ctrl+Shift+F9 in case of libra office to recalculate formulas.");
         workbook.close()?;

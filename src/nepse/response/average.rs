@@ -1,21 +1,25 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "PascalCase")]
 pub struct CompanyItem {
-    pub symbol: String,
-    pub status: String,
-    pub sector_name: String,
+    pub stock_symbol: String,
+    pub company_name: String,
+    pub company_group: String,
 }
+
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "PascalCase")]
 pub struct TradingAverageItem {
-    pub symbol: String,
-    pub closing_price_average: f64,
-    pub total_traded_amount: f64,
-    pub total_traded_shares: f64,
-    pub total_trades: Option<f64>,
-    pub weighted_average: f64,
-    pub close_price: f64,
-    pub closing_date: String,
+    pub stock_symbol: String,
+    pub traded_amount: String,
+    pub traded_shares: String,
+    pub no_of_transaction: f64,
+    pub closing_price: f64,
+    pub as_of_date_short_string: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ResponseInD<T> {
+    pub d: Vec<T>,
 }

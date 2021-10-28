@@ -1,3 +1,3 @@
 pub mod average;
-pub mod dividend;
+pub mod gain;
 pub mod updates;

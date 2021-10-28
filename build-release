@@ -20,7 +20,8 @@ case `uname -s` in
     Linux)
         echo "Building static binaries using ekidd/rust-musl-builder"
         docker pull clux/muslrust
-        docker run -v $PWD:/volume -t clux/muslrust sudo apt-get update && sudo apt-get install -y libclang-3.9 clang-3.9 llvm-3.9
+        docker run -v $PWD:/volume -t clux/muslrust apt-get update 
+        docker run -v $PWD:/volume -t clux/muslrust apt-get install -y libclang-3.9 clang-3.9 llvm-3.9
         docker run -v $PWD:/volume -t clux/muslrust cargo build --release
         cp "target/x86_64-unknown-linux-musl/release/$1" "$1"
         tar -czvf "$1-$2.tar.gz" "$1"
